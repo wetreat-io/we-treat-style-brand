@@ -1,12 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--
-We Treat Brand Guidelines —
-This is meant to be used as an additive to any basic layout and styling system (bootstrap, tailwind, etc.), or as a standalone custom system (or raw inline css)
-for producing brand consistent collateral (websites, print, promotional graphics, images, etc.)
-
-We use a very limited palette and focus on clean design with subtle gradients and rounded corners
--->
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -60,7 +53,9 @@ We use a very limited palette and focus on clean design with subtle gradients an
         }
         /* Defaults */
         p {margin: 8px 0}
-        label + p {margin-bottom: 20px}
+
+        label ~ p:last-of-type {margin-bottom: 22px}
+
         /* utils */
         .ar-1-1 {aspect-ratio: 1/1}
         .w-100 {
@@ -79,20 +74,100 @@ We use a very limited palette and focus on clean design with subtle gradients an
         .d-flex > button {
             flex: 0 0 auto;
         }
+        .d-none {
+            display: none;
+        }
+        #colors .d-flex,
+        #buttons .d-flex {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+        #colors .d-flex > *,
+        #buttons .d-flex > * {
+            flex: none;
+        }
 
         span[title] {
             cursor: help;
+        }
+
+        /* Page-only: CSS viewer */
+        #view-css-btn {
+            position: fixed;
+            bottom: 1.25rem;
+            left: 1.25rem;
+            z-index: 40;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5em;
+            padding: 0.7rem 1.25rem;
+            box-shadow: 0 0 30px 0 rgb(from var(--gray) r g b / 0.45);
+        }
+        .css-modal {
+            width: min(920px, calc(100vw - 2rem));
+            max-height: min(82vh, 900px);
+            padding: 0;
+            border: none;
+            border-radius: var(--rounded);
+            background: var(--black);
+            color: var(--white);
+            overflow: hidden;
+        }
+        .css-modal[open] {
+            display: flex;
+            flex-direction: column;
+        }
+        .css-modal::backdrop {
+            background: rgb(from var(--black) r g b / 0.55);
+            backdrop-filter: blur(6px);
+        }
+        .css-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem 0.75rem;
+            flex: 0 0 auto;
+        }
+        .css-modal-header label {
+            margin: 0;
+            color: var(--white);
+        }
+        .css-modal-header label::after {
+            background: var(--white);
+            opacity: 0.2;
+        }
+        .css-modal-header button {
+            flex: 0 0 auto;
+            padding: 0.45rem 1rem;
+            font-size: var(--font-size-s);
+        }
+        .css-modal-code {
+            margin: 0 1.25rem 1.25rem;
+            padding: 1rem 1.15rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+            flex: 1 1 auto;
+            background: #1c1c18;
+            color: var(--gray-light);
+            border-radius: var(--rounded-nested);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.45;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
         }
     
        
 </style>
   
-<style>
+<style id="full-brand-styles">
     :root {
     /* Brand Colors */
     --white: #ffffff;
     --gray: #D9D9D9;
     --gray-light: #ededed;
+    --gray-dark: #5e5e5e;
     --black: #2F2E29;
 
     --beige: #EFECE2; /* Background color to be used sparingly */
@@ -171,7 +246,8 @@ We use a very limited palette and focus on clean design with subtle gradients an
         font-style: italic;
         color: var(--brand-green);
     }
-    small {
+    small,
+    .small {
         font-size: var(--font-size-s);
     }
     .large {
@@ -201,7 +277,7 @@ We use a very limited palette and focus on clean design with subtle gradients an
         padding: 2rem;
     }
     body > section {
-        margin-bottom: 3vw;
+        margin-bottom: 2vw;
     }
     hr {
         border: none;
@@ -227,14 +303,20 @@ We use a very limited palette and focus on clean design with subtle gradients an
         color:var(--brand-green);
     }
     button {
+        --btn-arrow-size: 1.7em;
+        --btn-pad-y: 0.32em;
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
-        border:none;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         font-size: inherit;
         font-family: inherit;
         font-weight: 400;
-        padding: 1rem 2rem;
+        padding: var(--btn-pad-y) 2rem;
+        min-height: calc(var(--btn-arrow-size) + var(--btn-pad-y) * 2);
         border-radius: var(--rounded-full);
         background: var(--brand-green);
         color: var(--white);
@@ -249,7 +331,7 @@ We use a very limited palette and focus on clean design with subtle gradients an
     
     .button-primary-black {
         --btn-base: var(--black);
-        padding: 0.25em 0.22em 0.25em 1.65em;
+        padding: var(--btn-pad-y) var(--btn-pad-y) var(--btn-pad-y) 1.65em;
         font-weight: 500;
         background: radial-gradient(75% 170% at 50% 135%, var(--brand-green-dark), var(--btn-base) 73%);
         color: var(--white);
@@ -264,7 +346,7 @@ We use a very limited palette and focus on clean design with subtle gradients an
 
     .button-primary-green {
         --btn-base: var(--brand-green);
-        padding: 0.25em 0.22em 0.25em 1.65em;
+        padding: var(--btn-pad-y) var(--btn-pad-y) var(--btn-pad-y) 1.65em;
         font-weight: 500;
         color: var(--white);
         box-shadow: none;
@@ -282,13 +364,47 @@ We use a very limited palette and focus on clean design with subtle gradients an
         background-color: var(--brand-green-dark);
     }
     .button-outline {
-        background:none; 
-        border: solid 2px var(--brand-green);
+        background: none;
         color: var(--brand-green);
+        box-shadow: inset 0 0 0 2px var(--brand-green);
     }
     .button-outline:hover {
-        border-color: var(--brand-green-dark);
         color: var(--brand-green-dark);
+        box-shadow: inset 0 0 0 2px var(--brand-green-dark);
+    }
+    .button-text-black {
+        background: none;
+        color: var(--black);
+        box-shadow: none;
+    }
+    .button-text-black:hover {
+        background: none;
+        color: #000000;
+    }
+    .button-text-gray {
+        background: none;
+        color: var(--gray-dark);
+        box-shadow: none;
+    }
+    .button-text-gray:hover {
+        background: none;
+        color: var(--black);
+    }
+    .button-text-green {
+        background: none;
+        color: var(--brand-green);
+        box-shadow: none;
+    }
+    .button-text-green:hover {
+        background: none;
+        color: var(--brand-green-dark);
+    }
+    .field-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.75rem;
+        flex-wrap: wrap;
     }
 
     
@@ -303,13 +419,18 @@ We use a very limited palette and focus on clean design with subtle gradients an
     }
     .with-arrow::after {
         content: "→";
+        box-sizing: border-box;
         display: grid;
         place-items: center;
-        width: 2.05em;
-        aspect-ratio: 1/1;
+        width: var(--btn-arrow-size);
+        height: var(--btn-arrow-size);
+        min-width: var(--btn-arrow-size);
+        min-height: var(--btn-arrow-size);
+        overflow: hidden;
         border-radius: 50%;
-        border: 2px solid color-mix(in srgb, var(--brand-green) 70%, transparent);
+        border: 1.5px solid color-mix(in srgb, var(--brand-green) 70%, transparent);
         line-height: 1;
+        font-weight: 400;
         transition: border-color 0.2s ease;
     }
 
@@ -379,13 +500,173 @@ We use a very limited palette and focus on clean design with subtle gradients an
         backdrop-filter: blur(6px);
     }
 
+    /* Form elements — gray outlines; green is for focus and buttons. */
+    .field-label {
+        font-family: var(--font-body);
+        font-weight: 500;
+        font-size: var(--font-size-s);
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.45em;
+        width: 100%;
+    }
+    .field-label::after {
+        content: none;
+    }
+    .field-check {
+        font-family: var(--font-body);
+        font-weight: 400;
+        font-size: var(--font-size-m);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.55em;
+        width: auto;
+        cursor: pointer;
+    }
+    .field-check::after {
+        content: none;
+    }
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55em;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    input[type="url"],
+    input[type="date"],
+    input[type="time"],
+    textarea,
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 100%;
+        font-family: inherit;
+        font-size: var(--font-size-m);
+        font-weight: 400;
+        line-height: 1.2;
+        color: var(--black);
+        background: var(--white);
+        border: 1px solid var(--gray);
+        border-radius: 8px;
+        padding: 0.75em 1em;
+        box-shadow: none;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+    textarea {
+        min-height: 6.5em;
+        resize: vertical;
+    }
+    select {
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><path fill='%232F2E29' d='M3.2 5.8 8 10.6l4.8-4.8 1.2 1.2L8 13 2 7z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 1em center;
+        background-size: 0.85em;
+        padding-right: 2.4em;
+        cursor: pointer;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.65;
+    }
+    input[type="text"]:hover,
+    input[type="email"]:hover,
+    input[type="tel"]:hover,
+    input[type="password"]:hover,
+    input[type="search"]:hover,
+    input[type="number"]:hover,
+    input[type="url"]:hover,
+    input[type="date"]:hover,
+    input[type="time"]:hover,
+    textarea:hover,
+    select:hover {
+        border-color: var(--black);
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="password"]:focus,
+    input[type="search"]:focus,
+    input[type="number"]:focus,
+    input[type="url"]:focus,
+    input[type="date"]:focus,
+    input[type="time"]:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--brand-green);
+    }
+    ::placeholder {
+        color: var(--gray);
+        opacity: 1;
+    }
+    input[type="checkbox"],
+    input[type="radio"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 1.2em;
+        height: 1.2em;
+        margin: 0;
+        flex: 0 0 auto;
+        padding: 0;
+        box-shadow: none;
+        cursor: pointer;
+        font-size: var(--font-size-m);
+    }
+    input[type="checkbox"] {
+        border: none;
+        border-radius: 4px;
+        background-color: var(--gray);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 1em;
+    }
+    input[type="checkbox"]:checked {
+        background-color: var(--brand-green);
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' d='M2.8 8.2 6.4 12 13.2 3.8'/></svg>");
+    }
+    input[type="radio"] {
+        border: 1.5px solid var(--gray);
+        border-radius: 50%;
+        background-color: var(--white);
+        background-image: none;
+    }
+    input[type="radio"]:checked {
+        background-color: var(--white);
+        background-image: radial-gradient(circle at center, var(--brand-green) 40%, var(--white) 42%);
+        border-color: var(--gray);
+    }
+
+    /* SVG Icons */
+    .svg-icon {
+        width: 1em;
+        height: 1em;
+        flex: 0 0 auto;
+        overflow: visible;
+        color: currentColor;
+        fill: currentColor;
+    }
+    .svg-icon.white {
+        color: var(--white);
+        fill: var(--white);
+    }
+
 </style>
 
 
 </head>
 <body>
     <!-- Shared graphics. Logo color is applied on each <use>. -->
-    <svg aria-hidden="true" width="0" height="0" overflow="hidden" style="position:absolute">
+    <svg aria-hidden="true" width="0" height="0" overflow="hidden" style="position:absolute; display: none;">
         <symbol id="logo-w-bg" viewBox="0 0 391.6 94.44">
             <circle cx="47.22" cy="47.22" r="47.22"/>
         </symbol>
@@ -406,9 +687,18 @@ We use a very limited palette and focus on clean design with subtle gradients an
         </symbol>
     </svg>
 
+    <svg aria-hidden="true" width="0" height="0" overflow="hidden" style="position:absolute; display: none;">
+        <symbol id="icon-code-square" viewBox="96 96 448 448">
+            <path fill="currentColor" d="M480 128C497.7 128 512 142.3 512 160L512 480C512 497.7 497.7 512 480 512L160 512C142.3 512 128 497.7 128 480L128 160C128 142.3 142.3 128 160 128L480 128zM160 96C124.7 96 96 124.7 96 160L96 480C96 515.3 124.7 544 160 544L480 544C515.3 544 544 515.3 544 480L544 160C544 124.7 515.3 96 480 96L160 96zM356.7 228.7C350.5 234.9 350.5 245.1 356.7 251.3L425.4 320L356.7 388.7C350.5 394.9 350.5 405.1 356.7 411.3C362.9 417.5 373.1 417.5 379.3 411.3L459.3 331.3C465.5 325.1 465.5 314.9 459.3 308.7L379.3 228.7C373.1 222.5 362.9 222.5 356.7 228.7zM283.3 251.3C289.5 245.1 289.5 234.9 283.3 228.7C277.1 222.5 266.9 222.5 260.7 228.7L180.7 308.7C174.5 314.9 174.5 325.1 180.7 331.3L260.7 411.3C266.9 417.5 277.1 417.5 283.3 411.3C289.5 405.1 289.5 394.9 283.3 388.7L214.6 320L283.3 251.3z"/>
+        </symbol>
+    </svg>
+
     <section id="hero">
         <label>Welcome ✋</label>
-        <p>This is the We Treat brand guidelines page, intended for both human and AI consumption. To use this file, simply feed <a href="">this URL</a> to your AI of choice, or copy the source code and paste it into your project.</p>
+        <p>This is the We Treat brand guidelines page, intended for both human and AI consumption. To use this file, simply feed <a href="">this URL</a> to your AI of choice, or copy the source code and paste it into your project, OR copy the CSS from the View/Copy CSS button in the bottom left and paste into your AI of choice.</p>
+        <p>This is meant to be used as an additive to any basic layout and styling system (bootstrap, tailwind, custom, etc.), or as a standalone custom system (or raw inline css)
+for producing brand consistent collateral (websites, print, promotional graphics, images, etc.).</p>
+        <p>We use a very limited palette and focus on clean design with subtle gradients and rounded corners.</p>
     </section>
 
     <section id="voice">
@@ -464,6 +754,14 @@ We use a very limited palette and focus on clean design with subtle gradients an
                     <small>RGB(12, 162, 119)</small>
                 </div>
                 <p>Brand Green Dark</p>
+            </div>
+            <div class="box outline gray-light padded-s">
+                <div class="rounded-nested padded-s" style="background: var(--beige);">
+                    <br/>
+                    <small>#EFECE2</small><br/>
+                    <small>RGB(239, 236, 226)</small>
+                </div>
+                <p>Brand Beige</p>
             </div>
             <div class="box outline gray-light padded-s">
                 <div class="rounded-nested padded-s" style="background: var(--black); color: var(--gray);">
@@ -533,6 +831,15 @@ We use a very limited palette and focus on clean design with subtle gradients an
             <div>
                 <button class="button button-outline w-100">Outlined</button>
             </div>
+            <div>
+                <button class="button button-text-black w-100">Text Black</button>
+            </div>
+            <div>
+                <button class="button button-text-gray w-100">Text Gray</button>
+            </div>
+            <div>
+                <button class="button button-text-green w-100">Text Green</button>
+            </div>
         </div>
     </section>
 
@@ -566,6 +873,81 @@ We use a very limited palette and focus on clean design with subtle gradients an
             <div class="box shadow-beige padded">Shadow Beige</div>
             <div></div>
         </div>
+    </section>
+
+    <section id="form-elements">
+        <label>Form Elements</label>
+        <p>
+            Fields use medium type, a 1px gray border, and modest rounding. Green is reserved for focus, checks, radios, and buttons.
+        </p>
+
+        <form action="#" onsubmit="return false">
+            <div class="d-flex">
+                <label class="field-label">
+                    Full name
+                    <input type="text" name="name" placeholder="Jane Doe" autocomplete="name">
+                </label>
+                <label class="field-label">
+                    Email
+                    <input type="email" name="email" placeholder="jane@example.com" autocomplete="email">
+                </label>
+                <label class="field-label">
+                    Topic
+                    <select name="topic">
+                        <option value="">Select one</option>
+                        <option>New patient</option>
+                        <option>Follow-up</option>
+                        <option>Something else</option>
+                    </select>
+                </label>
+            </div>
+
+            <small class="w-100"><br/>Date & time</small>
+            <div class="d-flex">
+                <label class="field-label">
+                    Date
+                    <input type="date" name="date">
+                </label>
+                <label class="field-label">
+                    Time
+                    <input type="time" name="time">
+                </label>
+            </div>
+
+            <small class="w-100"><br/>Longer fields</small>
+            <label class="field-label w-100">
+                Message
+                <textarea name="message" placeholder="How can we help?"></textarea>
+            </label>
+
+            <small class="w-100"><br/>Choices</small>
+            <div class="d-flex">
+                <div class="field-group">
+                    <label class="field-check">
+                        <input type="checkbox" name="updates" checked>
+                        Email me updates
+                    </label>
+                    <label class="field-check">
+                        <input type="checkbox" name="sms">
+                        Text me reminders
+                    </label>
+                </div>
+                <div class="field-group">
+                    <label class="field-check">
+                        <input type="radio" name="contact" value="email" checked>
+                        Prefer email
+                    </label>
+                    <label class="field-check">
+                        <input type="radio" name="contact" value="phone">
+                        Prefer phone
+                    </label>
+                </div>
+                <div class="field-actions">
+                    <button type="reset" class="button button-text-gray">Clear</button>
+                    <button type="submit" class="button button-solid">Submit</button>
+                </div>
+            </div>
+        </form>
     </section>
 
     <div class="padded">
@@ -619,6 +1001,64 @@ We use a very limited palette and focus on clean design with subtle gradients an
     </div>
 
 
-    <div style="position: fixed; bottom: 4px; right: 4px; color: black; font-size: 8px;">0.1.0beta</div> 
+    <div style="position: fixed; bottom: 4px; right: 4px; color: black; font-size: 8px;">2.0.0 Beta</div>
+
+    <button type="button" id="view-css-btn" class="button-primary-black small" aria-haspopup="dialog" aria-controls="css-modal">
+        <svg class="svg-icon white" viewBox="0 0 24 24" role="img" aria-label="Code Square">
+            <use href="#icon-code-square" fill="currentColor"/>
+        </svg>
+        View/Copy CSS
+    </button>
+
+    <dialog id="css-modal" class="css-modal" aria-labelledby="css-modal-title">
+        <div class="css-modal-header">
+            <label id="css-modal-title">Brand CSS</label>
+            <button type="button" id="copy-css-btn" class="button-outline">Copy</button>
+            <button type="button" id="close-css-btn" class="button-solid">Close</button>
+        </div>
+        <pre id="css-modal-code" class="css-modal-code"></pre>
+    </dialog>
+
+    <script>
+        (function () {
+            const styleEl = document.getElementById("full-brand-styles");
+            const dialog = document.getElementById("css-modal");
+            const codeEl = document.getElementById("css-modal-code");
+            const openBtn = document.getElementById("view-css-btn");
+            const closeBtn = document.getElementById("close-css-btn");
+            const copyBtn = document.getElementById("copy-css-btn");
+
+            function brandCss() {
+                return (styleEl.textContent || "").replace(/^\n+/, "").replace(/\n+$/, "") + "\n";
+            }
+
+            openBtn.addEventListener("click", function () {
+                codeEl.textContent = brandCss();
+                dialog.showModal();
+            });
+
+            closeBtn.addEventListener("click", function () {
+                dialog.close();
+            });
+
+            dialog.addEventListener("click", function (event) {
+                const box = dialog.getBoundingClientRect();
+                const inside = event.clientX >= box.left && event.clientX <= box.right &&
+                    event.clientY >= box.top && event.clientY <= box.bottom;
+                if (!inside) dialog.close();
+            });
+
+            copyBtn.addEventListener("click", async function () {
+                try {
+                    await navigator.clipboard.writeText(codeEl.textContent);
+                    copyBtn.textContent = "Copied";
+                    setTimeout(function () { copyBtn.textContent = "Copy"; }, 1400);
+                } catch (err) {
+                    copyBtn.textContent = "Copy failed";
+                    setTimeout(function () { copyBtn.textContent = "Copy"; }, 1400);
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
